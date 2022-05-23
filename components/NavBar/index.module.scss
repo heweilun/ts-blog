@@ -1,0 +1,31 @@
+.navBar {
+    height: 60px;
+    background: #fff;
+    border-bottom: 1px solid #f1f1f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .loginArea {
+        font-size: 30px;
+        font-weight: 600;
+        margin-right: 60px;
+    }
+    .linkArea {
+        a {
+            font-size: 18px;
+            padding: 0 20px;
+            color: #515767;
+        }
+        .active {
+            color: #1e80ff;
+        }
+    }
+    .operationArea {
+        margin-left: 150px;
+        button{
+            &+*{
+                margin-left: 10px;
+            }
+        }
+    }
+}
