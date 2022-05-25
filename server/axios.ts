@@ -14,7 +14,7 @@ requestInstance.interceptors.request.use(config => config, error => Promise.reje
 // 添加响应拦截器
 requestInstance.interceptors.response.use(response => {
     if (response?.status === 200) {            
-        return Promise.resolve(response);        
+        return Promise.resolve(response.data);        
     } else {            
         return Promise.reject(response);        
     }

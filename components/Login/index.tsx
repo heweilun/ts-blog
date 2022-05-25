@@ -5,6 +5,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import styles from './index.module.scss'
 import CountDown from '@/components/CountDown'
 import request from '@/server/axios'
+import { checkPhone, warning } from '@/util/util'
 
 interface Iprops {
     isShow: boolean;
@@ -16,7 +17,7 @@ const Login: React.FC = (props: Iprops) => {
     const [ isShowVerifyCode, setIsShowVerifyCode ] = useState(false)//倒计时显示
     const { isShow = false, onClose } = props
     const [formValue, setFormValue] = useState({
-        username: null,
+        phone: null,
         verify: null
     })
     const onCancel = () => {
@@ -34,9 +35,19 @@ const Login: React.FC = (props: Iprops) => {
     const handleCountDown = () => {
         setIsShowVerifyCode(false)
     }
-    const getVerify = () => {
-        //校验手机号填写状态
-        request.post('/api/user/sendVerifyCode')
+    const getVerify = async () => {
+        if(checkPhone(form?.getFieldsValue().phone)) {
+            setIsShowVerifyCode(true)
+            let code: number = Math.floor(Math.random()*(9999-1000)) + 1000
+            let params = {
+                phone: form?.getFieldsValue().phone,
+                templateParamSet: code
+            }
+            const status = await request.post('/api/user/sendVerifyCode', params)
+            console.log(status)
+        }else {
+            warning('账户格式有误')
+        }
     }
     return (
         <Modal 
@@ -55,14 +66,12 @@ const Login: React.FC = (props: Iprops) => {
                 }
                 >
                 <Form.Item
-                    name="username"
-                    rules={[{ required: true,pattern:/^1[3456789]\d{9}$/, message: '手机号码格式有误' }]}
+                    name="phone"
                 >
                     <Input placeholder="请输入手机号" prefix={<UserOutlined className="site-form-item-icon" />}/>
                 </Form.Item>
                 <Form.Item
                     name="verify"
-                    rules={[{ required: true, message: '请输入验证码' }]}
                 >
                     <Input placeholder="验证码" suffix={isShowVerifyCode?<CountDown time={5} onEnd={handleCountDown}/>:<a onClick={getVerify}>获取验证码</a>}/>
                 </Form.Item>
