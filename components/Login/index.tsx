@@ -38,12 +38,10 @@ const Login: React.FC = (props: Iprops) => {
     const getVerify = async () => {
         if(checkPhone(form?.getFieldsValue().phone)) {
             setIsShowVerifyCode(true)
-            let code: number = Math.floor(Math.random()*(9999-1000)) + 1000
             let params = {
                 phone: form?.getFieldsValue().phone,
-                templateParamSet: code
             }
-            const status = await request.post('/api/user/sendVerifyCode', params)
+            const status = await request.post('http://localhost:8081/api/user/sendVerifyCode', params)
             console.log(status)
         }else {
             warning('账户格式有误')
