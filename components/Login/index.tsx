@@ -15,16 +15,17 @@ interface Iprops {
 const Login: React.FC = (props: Iprops) => {
     const [form] = Form.useForm()
     const [ isShowVerifyCode, setIsShowVerifyCode ] = useState(false)//倒计时显示
+    const [ expireTime, setExpireSecond ] = useState(60)
     const { isShow = false, onClose } = props
     const [formValue, setFormValue] = useState({
         phone: null,
-        verify: null
+        verifyCode: null
     })
     const onCancel = () => {
         onClose && onClose()
     }
-    const onFinish = (values: any) => {
-        console.log('Received values of form: ', values)
+    const onFinish = async (values: object) => {
+        const status = await request.post('http://localhost:8081/api/user/login', values)
     }
     const onFinishFailed = () => {
 
@@ -40,6 +41,7 @@ const Login: React.FC = (props: Iprops) => {
             setIsShowVerifyCode(true)
             let params = {
                 phone: form?.getFieldsValue().phone,
+                expireTime
             }
             const status = await request.post('http://localhost:8081/api/user/sendVerifyCode', params)
             console.log(status)
@@ -69,9 +71,9 @@ const Login: React.FC = (props: Iprops) => {
                     <Input placeholder="请输入手机号" prefix={<UserOutlined className="site-form-item-icon" />}/>
                 </Form.Item>
                 <Form.Item
-                    name="verify"
+                    name="verifyCode"
                 >
-                    <Input placeholder="验证码" suffix={isShowVerifyCode?<CountDown time={5} onEnd={handleCountDown}/>:<a onClick={getVerify}>获取验证码</a>}/>
+                    <Input placeholder="验证码" suffix={isShowVerifyCode?<CountDown time={expireTime} onEnd={handleCountDown}/>:<a onClick={getVerify}>获取验证码</a>}/>
                 </Form.Item>
                 <Form.Item>
                     <Button type="primary" htmlType="submit" style={{width: '100%'}}>登录</Button>
